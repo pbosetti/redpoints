@@ -15,6 +15,8 @@ SCALE_FACTOR = 0.05
 
 
 class RedPoints
+  attr_accessor :refresh_rate, :points, :point_size
+  
   def RedPoints.open
     RedPoints.new.run
   end
@@ -32,7 +34,7 @@ class RedPoints
     @yLast = -1
     @bmModifiers = 0
     @rotate = true
-    @draw = {:axes => true}
+    @draw = {:axes => true, :points => true, :lines => true }
     
     @x_s = {:x => 600, :y => 40, :z => 100} 
     @y_s = {:x => 50, :y => 600, :z => 50}
@@ -40,6 +42,11 @@ class RedPoints
     @range = {:x => 500, :y => 500, :z => 500}
     @x_pan = 0.0
     @y_pan = 0.0
+    
+    @refresh_rate = TIMER_FREQUENCY_MILLIS
+    
+    @points = []
+    @point_size = 10.0
     
     glutInit
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA)
@@ -57,7 +64,11 @@ class RedPoints
     glutKeyboardFunc self.keyboard
     glutMotionFunc   self.motion  
     glutMouseFunc    self.mouse   
-    glutTimerFunc    TIMER_FREQUENCY_MILLIS , self.timer, 0
+    glutTimerFunc    @refresh_rate, self.timer, 0
+  end
+  
+  def status
+    "#{@xLast}, #{@yLast}"
   end
   
   def run
@@ -76,12 +87,31 @@ class RedPoints
       glMatrixMode(GL_PROJECTION)
       glTranslate(0.1*@x_pan, 0.1*@y_pan, 0.0)
       glMatrixMode(GL_MODELVIEW)
-
+      
+      @points.each_with_index do |p,i|
+        if @draw[:lines]
+          if i < points.length - 1
+            glColor(1,1,1,1)
+            glBegin(GL_LINES)
+              glVertex(points[i])
+              glVertex(points[i+1])
+            glEnd()
+          end
+        end
+        if @draw[:points]
+          glPushMatrix()
+          glTranslate(*p) 
+          glColor(0,1,0,0.9)
+          glutSolidSphere(@point_size, 16, 16)
+          glPopMatrix()
+        end
+      end
+      
       if @draw[:axes]
         glLineWidth(1.0)
         glColor(1,0,0,0.66)
         glBegin(GL_LINES)
-          glVertex(-@axes_length,0,0)
+          glVertex(0,0,0)
           glVertex(@axes_length,0,0)
         glEnd()
         glPushMatrix()
@@ -92,7 +122,7 @@ class RedPoints
         
         glColor(0,1,0,0.66)
         glBegin(GL_LINES)
-          glVertex(0,-@axes_length,0)
+          glVertex(0,0,0)
           glVertex(0,@axes_length,0)
         glEnd()
         glPushMatrix()
@@ -103,7 +133,7 @@ class RedPoints
         
         glColor(0,0,1,0.66)
         glBegin(GL_LINES)
-          glVertex(0,0,-@axes_length)
+          glVertex(0,0,0)
           glVertex(0,0,@axes_length)
         glEnd()
         glPushMatrix()
@@ -134,6 +164,10 @@ class RedPoints
   def keyboard
     lambda do |key, x, y|
       case key
+      when ?p
+        @draw[:points] = !@draw[:points]
+      when ?l
+        @draw[:lines] = !@draw[:lines]
       when ?a
         @draw[:axes] = !@draw[:axes]
       when ?\e
@@ -175,16 +209,22 @@ class RedPoints
   
   def mouse
     lambda do |button, state, x, y|
-    
+      @bmModifiers = glutGetModifiers()
+      glutPostRedisplay()
     end
   end
   
   def timer
     lambda do |value|
       glutPostRedisplay()
+      glutTimerFunc(@refresh_rate, timer, 0)
     end
   end
   
 end
 
-rp = RedPoints.open
+server = RedPoints.new
+server_thread = Thread.new { server.run }
+DRb.start_service('druby://localhost:9000', server) 
+DRb.thread.join
+server_thread.kill
