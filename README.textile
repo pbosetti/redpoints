@@ -1,0 +1,7 @@
+h1. RedPoints
+
+RedPoints is a Ruby library that allows the plotting of trajectories on an OpenGL view.
+
+It is designed to run as a separate process, to which you connect via DRb within your application/command/utility/whatsoever.
+
+Well, at least these are the intentions.
