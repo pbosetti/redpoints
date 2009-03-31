@@ -218,6 +218,14 @@ class RedPoints
   def mouse
     lambda do |button, state, x, y|
       @bmModifiers = glutGetModifiers()
+      if (button == GLUT_LEFT_BUTTON)
+        if (state == GLUT_UP)
+          $xLast = -1
+          $yLast = -1
+        end
+        $xLastIncr = 0
+        $yLastIncr = 0
+      end
       glutPostRedisplay()
     end
   end
