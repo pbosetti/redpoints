@@ -84,9 +84,9 @@ class RedPoints
       glRotate(@fYDiff, 0,1,0)
       glRotate(@fZDiff, 0,0,1)
       glScale(@fScale, @fScale, @fScale)
-      glMatrixMode(GL_PROJECTION)
+      # glMatrixMode(GL_PROJECTION)
       glTranslate(0.1*@x_pan, 0.1*@y_pan, 0.0)
-      glMatrixMode(GL_MODELVIEW)
+      # glMatrixMode(GL_MODELVIEW)
       
       glPushMatrix()         # Begin rotation 90° about X
       glRotate(-90, 1,0,0)   # so to have Z axis pointing upward
