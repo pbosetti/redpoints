@@ -4,4 +4,8 @@ RedPoints is a Ruby library that allows the plotting of trajectories on an OpenG
 
 It is designed to run as a separate process, to which you connect via DRb within your application/command/utility/whatsoever.
 
-Well, at least these are the intentions.
+At the moment, it only plots an array of coordinates as a sequence of straight segments. I'm planning to add support for drawing more complex objects.
+
+Here's the obligatory screenshot, taken from the parent "GtoPDL2 project":http://github.com/pbosetti/gtopdl2:
+
+!http://cloud.github.com/downloads/pbosetti/redpoints/RedPoints.png!
