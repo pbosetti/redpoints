@@ -152,7 +152,7 @@ class RedPoints
       gluPerspective(65.0,  w/ h, 10.0, 2000.0)
       glMatrixMode(GL_MODELVIEW)
       glLoadIdentity()
-      glTranslate(0, 0, -2*@z_s[:z])
+      glTranslate(0, 0, -1200)
     end
   end
   
