@@ -22,7 +22,7 @@ class RedPoints
   end
   
   def initialize(args={})
-    @axes_length = 500
+    @axes_length = 100
     @fXDiff = 0
     @fYDiff = 35
     @fZDiff = 0
@@ -80,13 +80,16 @@ class RedPoints
     lambda do 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT)
       glPushMatrix()
-      glRotate(@fYDiff, 1,0,0)
-      glRotate(@fXDiff, 0,1,0)
+      glRotate(@fXDiff, 1,0,0)
+      glRotate(@fYDiff, 0,1,0)
       glRotate(@fZDiff, 0,0,1)
       glScale(@fScale, @fScale, @fScale)
       glMatrixMode(GL_PROJECTION)
       glTranslate(0.1*@x_pan, 0.1*@y_pan, 0.0)
       glMatrixMode(GL_MODELVIEW)
+      
+      glPushMatrix()         # Begin rotation 90° about X
+      glRotate(-90, 1,0,0)   # so to have Z axis pointing upward
       
       @points.each_with_index do |p,i|
         if @draw[:lines]
@@ -101,8 +104,8 @@ class RedPoints
         if @draw[:points]
           glPushMatrix()
           glTranslate(*p) 
-          glColor(0,1,0,0.9)
-          glutSolidSphere(@point_size, 16, 16)
+          glColor(1,0,0,0.9)
+          glutSolidSphere(@point_size/@fScale, 16, 16)
           glPopMatrix()
         end
       end
@@ -112,37 +115,38 @@ class RedPoints
         glColor(1,0,0,0.66)
         glBegin(GL_LINES)
           glVertex(0,0,0)
-          glVertex(@axes_length,0,0)
+          glVertex(@axes_length/@fScale,0,0)
         glEnd()
         glPushMatrix()
-        glTranslate(@axes_length,0,0)
+        glTranslate(@axes_length/@fScale,0,0)
         glRotate(90,0,1,0)
-        glutSolidCone(20, 30, 20, 1)
+        glutSolidCone(20/@fScale, 30/@fScale, 20, 1)
         glPopMatrix()
         
         glColor(0,1,0,0.66)
         glBegin(GL_LINES)
           glVertex(0,0,0)
-          glVertex(0,@axes_length,0)
+          glVertex(0,@axes_length/@fScale,0)
         glEnd()
         glPushMatrix()
-        glTranslate(0,@axes_length,0)
+        glTranslate(0,@axes_length/@fScale,0)
         glRotate(-90,1,0,0)
-        glutSolidCone(20, 30, 20, 1)
+        glutSolidCone(20/@fScale, 30/@fScale, 20, 1)
         glPopMatrix()
         
         glColor(0,0,1,0.66)
         glBegin(GL_LINES)
           glVertex(0,0,0)
-          glVertex(0,0,@axes_length)
+          glVertex(0,0,@axes_length/@fScale)
         glEnd()
         glPushMatrix()
-        glTranslate(0,0,@axes_length)
+        glTranslate(0,0,@axes_length/@fScale)
         glRotate(0,0,1,0)
-        glutSolidCone(20, 30, 20, 1)
+        glutSolidCone(20/@fScale, 30/@fScale, 20, 1)
         glPopMatrix()
       end
-
+      
+      glPopMatrix()  # end rotation about X
       glPopMatrix()
       glFlush()
       glutSwapBuffers()
@@ -170,6 +174,10 @@ class RedPoints
         @draw[:lines] = !@draw[:lines]
       when ?a
         @draw[:axes] = !@draw[:axes]
+      when ?+
+        @point_size *= 2.0
+      when ?-
+        @point_size /= 2.0
       when ?\e
         exit(0)
       end
@@ -195,8 +203,8 @@ class RedPoints
           end
         else
           if (@xLast != -1)
-            @fXDiff += @xLastIncr
-            @fYDiff += @yLastIncr
+            @fXDiff += @yLastIncr
+            @fYDiff += @xLastIncr
             @x_pan = @y_pan = 0
           end
         end
