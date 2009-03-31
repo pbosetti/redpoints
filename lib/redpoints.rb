@@ -230,8 +230,10 @@ class RedPoints
   
 end
 
-server = RedPoints.new
-server_thread = Thread.new { server.run }
-DRb.start_service('druby://localhost:9000', server) 
-DRb.thread.join
-server_thread.kill
+if __FILE__ == $0
+  server = RedPoints.new
+  server_thread = Thread.new { server.run }
+  DRb.start_service('druby://localhost:9000', server) 
+  DRb.thread.join
+  server_thread.kill
+end
