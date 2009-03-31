@@ -10,7 +10,7 @@ require 'mathn'
 require 'drb'
 include Gl,Glu,Glut
 
-TIMER_FREQUENCY_MILLIS = 20
+TIMER_FREQUENCY_MILLIS = 50
 SCALE_FACTOR = 0.05
 
 
@@ -24,7 +24,7 @@ class RedPoints
   def initialize(args={})
     @axes_length = 100
     @fXDiff = 0
-    @fYDiff = 35
+    @fYDiff = 0
     @fZDiff = 0
     @xLastIncr = 0
     @yLastIncr = 0
@@ -181,7 +181,6 @@ class RedPoints
       when ?\e
         exit(0)
       end
-      glutPostRedisplay()
     end
   end
   
@@ -211,7 +210,6 @@ class RedPoints
       end
       @xLast = x
       @yLast = y
-      glutPostRedisplay()
     end
   end
   
@@ -220,13 +218,12 @@ class RedPoints
       @bmModifiers = glutGetModifiers()
       if (button == GLUT_LEFT_BUTTON)
         if (state == GLUT_UP)
-          $xLast = -1
-          $yLast = -1
+          @xLast = -1
+          @yLast = -1
         end
-        $xLastIncr = 0
-        $yLastIncr = 0
+        @xLastIncr = 0
+        @yLastIncr = 0
       end
-      glutPostRedisplay()
     end
   end
   
@@ -234,6 +231,7 @@ class RedPoints
     lambda do |value|
       glutPostRedisplay()
       glutTimerFunc(@refresh_rate, timer, 0)
+      puts "pan: [#{@x_pan}, #{@y_pan}]"
     end
   end
   
