@@ -29,17 +29,11 @@ class RedPoints
     @xLastIncr = 0
     @yLastIncr = 0
     @fScale = 1.0
-    @ftime = 0
     @xLast = -1
     @yLast = -1
     @bmModifiers = 0
-    @rotate = true
     @draw = {:axes => true, :points => true, :lines => true }
     
-    @x_s = {:x => 600, :y => 40, :z => 100} 
-    @y_s = {:x => 50, :y => 600, :z => 50}
-    @z_s = {:x => 40, :y => 40, :z => 600}
-    @range = {:x => 500, :y => 500, :z => 500}
     @x_pan = 0.0
     @y_pan = 0.0
     
@@ -84,9 +78,6 @@ class RedPoints
       glRotate(@fYDiff, 0,1,0)
       glRotate(@fZDiff, 0,0,1)
       glScale(@fScale, @fScale, @fScale)
-      glMatrixMode(GL_PROJECTION)
-      glTranslate(0.1*@x_pan, 0.1*@y_pan, 0.0)
-      glMatrixMode(GL_MODELVIEW)
       
       glPushMatrix()         # Begin rotation 90° about X
       glRotate(-90, 1,0,0)   # so to have Z axis pointing upward
@@ -197,8 +188,11 @@ class RedPoints
           end
         elsif (@bmModifiers & GLUT_ACTIVE_SHIFT != 0)
           if (@xLast != -1)
-            @x_pan = x - glutGet(GLUT_WINDOW_WIDTH)/2.0
+            @x_pan = x   - glutGet(GLUT_WINDOW_WIDTH)/2.0
             @y_pan = - y + glutGet(GLUT_WINDOW_HEIGHT)/2.0
+            glMatrixMode(GL_PROJECTION)
+            glTranslate(0.1*@x_pan, 0.1*@y_pan, 0.0)
+            glMatrixMode(GL_MODELVIEW)
           end
         else
           if (@xLast != -1)
@@ -231,7 +225,6 @@ class RedPoints
     lambda do |value|
       glutPostRedisplay()
       glutTimerFunc(@refresh_rate, timer, 0)
-      puts "pan: [#{@x_pan}, #{@y_pan}]"
     end
   end
   
