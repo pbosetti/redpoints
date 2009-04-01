@@ -9,3 +9,16 @@ At the moment, it only plots an array of coordinates as a sequence of straight s
 Here's the obligatory screenshot, taken from the parent "GtoPDL2 project":http://github.com/pbosetti/gtopdl2:
 
 !http://cloud.github.com/downloads/pbosetti/redpoints/RedPoints.png!
+
+h2. Run a basic test
+
+First, launch the viewer:
+
+<code>$> ruby lib/redpoints.rb &</code>
+
+Then run the test:
+
+<code>$> ruby client_test.rb</code>
+
+The communication between the client and the viewer exploits the great DRb library (Distributed Ruby) through the TCP port 9000.
+At the end, close the viewer by hitting ESC.

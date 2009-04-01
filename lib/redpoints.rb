@@ -45,7 +45,7 @@ class RedPoints
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_ALPHA)
     glutInitWindowSize(500, 500) 
     glutInitWindowPosition(100, 100)
-    glutCreateWindow($0)
+    glutCreateWindow("RedPoints Viewer")
     glClearColor(0.0, 0.0, 0.0, 0.0)
     glShadeModel     GL_SMOOTH
     glEnable         GL_DEPTH_TEST
@@ -59,6 +59,7 @@ class RedPoints
     glutMouseFunc    self.mouse  
     glutIdleFunc     self.idle 
     glutSpecialFunc  self.special
+    @w, @h = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
   end
   
   def status
@@ -153,6 +154,7 @@ class RedPoints
       glMatrixMode(GL_MODELVIEW)
       glLoadIdentity()
       glTranslate(0, 0, -1200)
+      @w, @h = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
     end
   end
   
@@ -260,7 +262,7 @@ Keystrokes:
     lambda do
       glutPostRedisplay()
     end
-  end
+  end  
   
 end
 
